@@ -1,23 +1,22 @@
-package main
+package htmlparser
 
 import (
-	"fmt"
 	"os"
 	"strings"
 
 	"golang.org/x/net/html"
 )
 
-func main() {
-	type htmlParseData struct {
-		Href string
-		Text string
-	}
-	var parseData []htmlParseData // slice to hold multiple htmlParseData objects
-	file, err := os.Open("ex1.html")
+type HTMLParseData struct {
+	Href string
+	Text string
+}
+
+func ParseHTMLFile(filePath string) ([]HTMLParseData, error) {
+	var parseData []HTMLParseData
+	file, err := os.Open(filePath)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return nil, err
 	}
 	defer file.Close()
 
@@ -28,11 +27,10 @@ func main() {
 		tokenType := z.Next()
 		tn, _ := z.TagName()
 		if tokenType == html.ErrorToken {
-			fmt.Println(parseData)
-			return
+			return parseData, nil
 		}
 		if string(tn) == "a" {
-			var newData htmlParseData
+			var newData HTMLParseData
 			if tokenType == html.StartTagToken {
 				key, value, _ := z.TagAttr()
 				if string(key) == "href" {
@@ -45,8 +43,6 @@ func main() {
 			}
 		}
 	}
-
-
 }
 
 func getText(z *html.Tokenizer, depth *int) string {
@@ -69,5 +65,3 @@ func getText(z *html.Tokenizer, depth *int) string {
 		}
 	}
 }
-
-
