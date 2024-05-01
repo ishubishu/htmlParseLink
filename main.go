@@ -8,7 +8,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-func main() {
+func HtmlParse() {
 	type htmlParseData struct {
 		Href string
 		Text string
